@@ -1,4 +1,16 @@
 {
   "name": "360",
-  "packageManager": "yarn@4.1.1"
+  "packageManager": "yarn@4.1.1",
+  "scripts": {
+    "build": "esbuild main.ts --bundle --outfile=dist/main.js --bundle --minify --sourcemap --tree-shaking=true --target=chrome120,safari17",
+    "serve": "yarn build --serve=0.0.0.0:8080 --serve-fallback=dist/index.html --servedir=dist"
+  },
+  "dependencies": {
+    "three": "^0.162.0"
+  },
+  "devDependencies": {
+    "@types/three": "^0.162.0",
+    "esbuild": "^0.20.2",
+    "typescript": "^5.4.3"
+  }
 }

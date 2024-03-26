@@ -11,3 +11,8 @@
 
 #!.yarn/cache
 .pnp.*
+
+node_modules
+dist/main.js
+dist/main.js.map
+.DS_Store
