@@ -52,14 +52,3 @@ addEventListener(
   },
   false
 );
-
-// Add logo in js to make it harder to remove
-const logo = document.createElement("img");
-logo.src = "img/logo.png";
-logo.style.position = "absolute";
-logo.style.bottom = "15px";
-logo.style.right = "15px";
-logo.style.width = "200px";
-logo.style.pointerEvents = "none";
-
-document.body.appendChild(logo);
