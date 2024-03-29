@@ -13,6 +13,7 @@ class PanoramaControls extends EventDispatcher {
   private currentMouse = new Vector2();
   private down = false;
   private rotationFactor = 0.66;
+  private prevTouchDistance = 0;
 
   public autoRotationSpeed = 0.05;
   public minFov = 20;
@@ -64,6 +65,7 @@ class PanoramaControls extends EventDispatcher {
       const touch = ev.touches[0];
       this.onStart(touch.clientX, touch.clientY);
     }
+    this.prevTouchDistance = 0;
   }
 
   onMouseMove(ev: MouseEvent) {
@@ -71,9 +73,24 @@ class PanoramaControls extends EventDispatcher {
   }
 
   onTouchMove(ev: TouchEvent) {
-    if (ev.touches.length) {
+    if (ev.touches.length === 1) {
       const touch = ev.touches[0];
       this.onMove(touch.clientX, touch.clientY);
+    } else if (ev.touches.length === 2) {
+      const distance = Math.hypot(
+        ev.touches[0].clientX - ev.touches[1].clientX,
+        ev.touches[0].clientY - ev.touches[1].clientY
+      );
+      if (distance !== this.prevTouchDistance && this.prevTouchDistance !== 0) {
+        const scale = this.prevTouchDistance / distance;
+        this.camera.fov = MathUtils.clamp(
+          this.camera.fov * scale,
+          this.minFov,
+          this.maxFov
+        );
+        this.camera.updateProjectionMatrix();
+      }
+      this.prevTouchDistance = distance;
     }
   }
 
