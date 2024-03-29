@@ -2,30 +2,26 @@ import {
   EventDispatcher,
   MathUtils,
   Vector2,
-  Vector3,
   type PerspectiveCamera,
 } from "three";
-
-const up = new Vector3(0, 1, 0);
 
 class PanoramaControls extends EventDispatcher {
   private camera: PerspectiveCamera;
   private domElement: HTMLElement;
 
-  private moveStart: Vector2 | undefined;
+  private preFrameMouse: Vector2 | undefined;
+  private currentMouse = new Vector2();
+  private down = false;
+  private rotationFactor = 0.66;
 
-  private target: Vector3 = new Vector3(1, 0, 0);
-
-  public autoRotationSpeed = 0.03;
+  public autoRotationSpeed = 0.05;
   public minFov = 20;
   public maxFov = 90;
+  public zoomFactor = 0.1;
 
-  public rotationFactor = 0.0012;
-  public zoomFactor = 0.02;
-
-  constructor(object: PerspectiveCamera, domElement: HTMLElement) {
+  constructor(camera: PerspectiveCamera, domElement: HTMLElement) {
     super();
-    this.camera = object;
+    this.camera = camera;
     this.domElement = domElement;
     this.domElement.style.touchAction = "none"; // disable touch scroll
 
@@ -59,46 +55,25 @@ class PanoramaControls extends EventDispatcher {
     domElement.addEventListener("wheel", this.onMouseWheel.bind(this), false);
   }
 
-  onMouseStart(ev: MouseEvent): any {
-    this.moveStart = new Vector2(ev.clientX, ev.clientY);
+  onMouseStart(ev: MouseEvent) {
+    this.onStart(ev.clientX, ev.clientY);
   }
 
-  onTouchStart(ev: TouchEvent): any {
+  onTouchStart(ev: TouchEvent) {
     if (ev.touches.length) {
       const touch = ev.touches[0];
-      this.moveStart = new Vector2(touch.clientX, touch.clientY);
+      this.onStart(touch.clientX, touch.clientY);
     }
   }
 
-  onEnd(ev: Event): any {
-    this.moveStart = undefined;
+  onMouseMove(ev: MouseEvent) {
+    this.onMove(ev.clientX, ev.clientY);
   }
 
-  onMouseMove(ev: MouseEvent): any {
-    if (this.moveStart) {
-      this.onMove(ev.clientX, ev.clientY);
-    }
-  }
-
-  onTouchMove(ev: TouchEvent): any {
-    if (this.moveStart) {
-      if (ev.touches.length) {
-        const touch = ev.touches[0];
-        this.onMove(touch.clientX, touch.clientY);
-      }
-    }
-  }
-
-  onMove(x: number, y: number): any {
-    if (this.moveStart) {
-      let dx = x - this.moveStart.x;
-      let dy = y - this.moveStart.y;
-      this.target.applyAxisAngle(up, dx * this.rotationFactor);
-      this.target.applyAxisAngle(
-        this.target.clone().applyAxisAngle(up, Math.PI / 2),
-        -dy * this.rotationFactor
-      );
-      this.moveStart = new Vector2(x, y);
+  onTouchMove(ev: TouchEvent) {
+    if (ev.touches.length) {
+      const touch = ev.touches[0];
+      this.onMove(touch.clientX, touch.clientY);
     }
   }
 
@@ -112,11 +87,43 @@ class PanoramaControls extends EventDispatcher {
     this.camera.updateProjectionMatrix();
   }
 
+  onEnd(): any {
+    this.down = false;
+    this.preFrameMouse = undefined;
+  }
+
+  onStart(x: number, y: number) {
+    this.down = true;
+    this.currentMouse.set(x, y);
+  }
+
+  onMove(x: number, y: number) {
+    this.currentMouse.set(x, y);
+  }
+
   update(delta: number) {
-    if (!this.moveStart && this.autoRotationSpeed !== 0) {
-      this.target.applyAxisAngle(up, delta * -this.autoRotationSpeed);
+    if (this.down) {
+      if (this.preFrameMouse) {
+        const diff = this.currentMouse.clone().sub(this.preFrameMouse);
+        if (diff.x !== 0 || diff.y !== 0) {
+          const max = Math.max(window.innerWidth, window.innerHeight);
+          const x = (diff.x / max) * 2;
+          const y = (diff.y / max) * 2;
+          const fovFactor = this.camera.fov / 50;
+          this.camera.rotateOnWorldAxis(
+            this.camera.up,
+            x * fovFactor * this.rotationFactor
+          );
+          this.camera.rotateX(y * fovFactor * this.rotationFactor);
+        }
+      }
+      this.preFrameMouse = this.currentMouse.clone();
+    } else if (this.autoRotationSpeed !== 0) {
+      this.camera.rotateOnWorldAxis(
+        this.camera.up,
+        -this.autoRotationSpeed * delta
+      );
     }
-    this.camera.lookAt(this.target);
   }
 }
 
