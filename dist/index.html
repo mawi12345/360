@@ -3,13 +3,13 @@
 
 <head>
   <meta charset="utf-8">
-  <title>360</title>
+  <title>360.js</title>
   <style>
     body {
       margin: 0;
     }
 
-    .lds-hourglass {
+    .loading {
       display: inline-block;
       position: absolute;
       left: calc(50% - 40px);
@@ -18,7 +18,7 @@
       height: 80px;
     }
 
-    .lds-hourglass:after {
+    .loading:after {
       content: " ";
       display: block;
       border-radius: 50%;
@@ -28,10 +28,10 @@
       box-sizing: border-box;
       border: 32px solid #fff;
       border-color: #fff transparent #fff transparent;
-      animation: lds-hourglass 1.2s infinite;
+      animation: loading 1.2s infinite;
     }
 
-    @keyframes lds-hourglass {
+    @keyframes loading {
       0% {
         transform: rotate(0);
         animation-timing-function: cubic-bezier(0.55, 0.055, 0.675, 0.19);
@@ -53,13 +53,18 @@
       right: 15px;
       width: 200px;
       pointer-events: none;
+
+      font-family: Arial, sans-serif;
+      font-size: 42px;
+      color: #fff;
+      text-align: right;
     }
   </style>
 </head>
 
 <body>
-  <div class="lds-hourglass"></div>
-  <img class="logo" src="./img/logo.png">
+  <div class="loading"></div>
+  <div class="logo">360.js</div>
   <script type="module" src="./main.js"></script>
 </body>
 
