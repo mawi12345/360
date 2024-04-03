@@ -4,8 +4,8 @@
 
 Features:
 
-* Spherical panoramas ([example](dist/img/default.jpg))
-* Cube face panoramas ([example](dist/img/default/nx.jpg))
+* Spherical panoramas ([example](dist/img/example.jpg))
+* Cube face panoramas ([example](dist/img/example/nx.jpg))
 * Configuration via URL params
   * `scene` image source (default: `example`)
   * `type` cube or sphere (default: `cube`)
