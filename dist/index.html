@@ -3,7 +3,8 @@
 
 <head>
   <meta charset="utf-8">
-  <title>360.js</title>
+  <title>360° panorama</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.3/gh-fork-ribbon.min.css" />
   <style>
     body {
       margin: 0;
@@ -46,25 +47,13 @@
         transform: rotate(1800deg);
       }
     }
-
-    .logo {
-      position: absolute;
-      bottom: 15px;
-      right: 15px;
-      width: 200px;
-      pointer-events: none;
-
-      font-family: Arial, sans-serif;
-      font-size: 42px;
-      color: #fff;
-      text-align: right;
-    }
   </style>
 </head>
 
 <body>
   <div class="loading"></div>
-  <div class="logo">360.js</div>
+  <!-- replace ribbon with your logo -->
+  <a class="github-fork-ribbon" href="https://github.com/mawi12345/360" data-ribbon="Fork me on GitHub" title="Fork me on GitHub">Fork me on GitHub</a>
   <script type="module" src="./main.js"></script>
 </body>
 
